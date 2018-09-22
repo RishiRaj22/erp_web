@@ -1,0 +1,211 @@
+<form id="form_add" action="/add/" method="post">
+    <div>
+        <label for="uid" class="input_label_add">User ID</label>
+        <input name="uid" class="input_add" id="uid" type="text"/>
+    </div>
+    <div>
+        <label for="password" class="input_label_add">Password</label>
+        <input name="password" class="input_add" id="password" type="password"/>
+        <div id="password_toggle" class="show">Show</div>
+    </div>
+    <div id="input_error_msg" class="error_message"></div>
+    <div id="loading_add" class="loading_status">
+        <div class="loader"></div>
+        <div id="loading_text">Connecting to ERP server</div>
+    </div>
+    <div>
+        <input type="submit" class="button" id="button_add" value="Submit"/>
+    </div>
+</form>
+
+<style>
+* {
+    text-align: center;
+}
+
+.loading_status, .loading_status > * {
+    font-size: 1.3em;
+    display: inline;
+    line-height: 70px;
+    vertical-align: middle;
+}
+
+.loader {
+    border: 9px solid #f3f3f3;
+    border-top: 9px solid #43a047;
+    border-radius: 50%;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+    #form_add * {
+    font-size: 0.9em;
+}
+#input_error_msg {
+    color: #ef3333;
+}
+#form_add > div {
+    margin: 5px;
+    padding: 5px;
+}
+
+.input_label_add {
+    display: inline-block;
+    width: 120px;
+    margin-right: 10px;
+    text-align: right;
+}
+
+.input_add {
+    width: 340px;
+}
+
+.note {
+    font-size: 0.8em;
+    max-width: 900px;
+    margin: 40px auto auto;
+}
+#password_toggle {
+    display: inline;
+    position: absolute;
+    cursor: pointer;
+    background-color: #43a047;
+    color: #fafafa;
+    padding: 7px;
+    border-radius: 30px;
+    transform: translate(10px, -7px);
+}
+
+#button_add {
+    width: 150px;
+    border-radius: 101px;
+}
+
+
+@media only screen and (max-width: 500px) {
+    .input_add {
+        width: 200px;
+        font-size: 0.85em;
+    }
+
+    .input_label_add {
+        width: 65px;
+        font-size: 0.85em;
+        margin-right: 5px;
+    }
+
+    .form_button_server_add {
+        margin-left: 50px;
+    }
+    
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(function () {
+    var uid, pass;
+    var requestQueued = false;
+    $("#loading_add").hide();
+
+    /*
+    Checks if request can be sent by checking if any request already exists,
+    the validity of uid and password supplied.
+    Moreover, it updates the error message according to where the error
+     */
+    var canRequestBeSent = function () {
+        //If we already have a request queued
+        if (requestQueued) {
+            $('#button_add').prop('disabled', true);
+            return false;
+        }
+        uid = $("#uid").val();
+        pass = $("#password").val();
+        if (uid == '') {
+            $('#input_error_msg').text("Invalid uid");
+            $('#button_add').prop('disabled', true);
+        }
+        else if (pass == '') {
+            $('#input_error_msg').text("Password empty");
+            $('#button_add').prop('disabled', true);
+        }
+        else {
+            $('#button_add').prop('disabled', false);
+            $('#input_error_msg').text("");
+            return true;
+        }
+        return false;
+    };
+
+    $('#uid').keyup(canRequestBeSent);
+
+    $('#password').keyup(canRequestBeSent);
+
+    $("#password_toggle").click(function () {
+        if ($(this).hasClass('show')) {
+            $(this).text('Hide');
+            $('#password').attr('type', 'text');
+            $(this).removeClass('show');
+        } else {
+            $(this).text('Show');
+            $('#password').attr('type', 'password');
+            $(this).addClass('show');
+        }
+    });
+
+    $("#form_add").submit(function (event) {
+        $("#password_toggle").text('Show');
+        $('#password').attr('type', 'password');
+        event.preventDefault();
+        if (!canRequestBeSent()) {
+            return;
+        }
+        $("#loading_add").show();
+        var data = {};
+        data.uid = uid;
+        data.pwd = pass;
+        $.post(
+            {
+                url: "/fetch/",
+                data: JSON.stringify(data),
+                success: function (data) {
+                    var pu = data.pingUrl;
+                    function doPoll(){
+                        console.log("Polling");
+                        $.get(pu, function(data) {
+                            console.log(data);
+                            data = JSON.parse(data);
+                            if(data.loading) {
+                                $("#loading_text").text(data.message);
+                                setTimeout(doPoll,2000);
+                            } else {
+                                $("#loading_add").hide();
+                                if (data.success) {
+                                    window.location = data.redirectLink;
+                                } else {
+                                    $("#input_error_msg").text(data.message);
+                                }
+                                requestQueued = false;
+                            }
+                        });
+                    }
+                    doPoll();
+                },
+                contentType: "application/json",
+                dataType: 'json'
+            }
+        );
+        requestQueued = true;
+        canRequestBeSent();
+    });
+});
+</script>
