@@ -3,7 +3,10 @@ const app = express();
 const bodyParser = require('body-parser')
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-const rootUrl = "http://localhost:8080";
+
+//Comment the line below and uncomment the one further below to run locally
+const rootUrl = "https://bit-attendance.herokuapp.com/";
+//const rootUrl = "http://localhost:8080/";
 
 var datas = {};
 var images = {};

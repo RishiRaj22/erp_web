@@ -1,3 +1,14 @@
+<html>
+<head>
+    <meta property="og:title" content="Attendance for students of BIT Mesra and its off campuses">
+    <title>Death to ERP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="twitter:creator" content="@NotThatRishi">
+    <meta property="og:locale" content="en_US">
+    <meta charset="UTF-8">
+</head>
+    <body>
+        <h1>Type your ERP credentials</h1>
 <form id="form_add" action="/add/" method="post">
     <div>
         <label for="uid" class="input_label_add">User ID</label>
@@ -17,12 +28,30 @@
         <input type="submit" class="button" id="button_add" value="Submit"/>
     </div>
 </form>
+</body>
+<h3>Note: I donot store any credentials. Read the source or build it thyself if you don't take my word.</h3>
+<footer>Made by <a href="https://rishiraj.me">Rishi Raj</a> &middot; <a href="https://github.com/rishiraj22/erp_web">Source code</a></footer>
+
+<!-- Note to self: Hi, are you OK? Why would someone go through such pain to create this? -->
 
 <style>
 * {
     text-align: center;
 }
-
+.button, button {
+    font-size: 0.95em;
+    background: #43a047;
+    color: white;
+    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    outline: none !important;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 8px;
+    margin-top: 10px;
+    padding: 10px;
+}
 .loading_status, .loading_status > * {
     font-size: 1.3em;
     display: inline;
@@ -67,6 +96,7 @@
 }
 
 .input_add {
+    text-align: left;
     width: 340px;
 }
 
@@ -209,3 +239,4 @@
     });
 });
 </script>
+</html>
