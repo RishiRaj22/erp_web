@@ -4,9 +4,18 @@ const bodyParser = require('body-parser')
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
-//Comment the line below and uncomment the one further below to run locally
+
+// const rootUrl = "http://localhost:8080/";
+//Uncomment the line above and comment the 8 lines below to run locally
 const rootUrl = "https://bit-attendance.herokuapp.com/";
-//const rootUrl = "http://localhost:8080/";
+app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https') {
+      res.redirect(`https://${req.header('host')}${req.url}`)
+    } else {
+      next();
+    }
+  });
+  
 
 var datas = {};
 var images = {};
