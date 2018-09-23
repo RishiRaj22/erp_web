@@ -187,7 +187,7 @@ body {
     the validity of uid and password supplied.
     Moreover, it updates the error message according to where the error
      */
-    var canRequestBeSent = function () {
+    var canRequestBeSent = function (errorTextSet) {
         //If we already have a request queued
         if (requestQueued) {
             $('#button_add').prop('disabled', true);
@@ -205,7 +205,9 @@ body {
         }
         else {
             $('#button_add').prop('disabled', false);
-            $('#input_error_msg').text("");
+            if(errorTextSet === undefined) {
+                $('#input_error_msg').text("");
+            }
             return true;
         }
         return false;
@@ -260,6 +262,7 @@ body {
                                     $("#input_error_msg").text(data.message);
                                 }
                                 requestQueued = false;
+                                canRequestBeSent(true);
                             }
                         });
                     }
