@@ -5,16 +5,14 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 
 
-// const rootUrl = "http://localhost:8080/";
-//Uncomment the line above and comment the 8 lines below to run locally
-const rootUrl = "https://bit-attendance.herokuapp.com/";
+//Comment the 8 lines below to run locally(required to enforce https)
 app.use((req, res, next) => {
     if (req.header('x-forwarded-proto') !== 'https') {
-      res.redirect(`https://${req.header('host')}${req.url}`)
+        res.redirect(`https://${req.header('host')}${req.url}`)
     } else {
-      next();
+        next();
     }
-  });
+});
   
 
 var datas = {};
@@ -51,7 +49,7 @@ async function run(uid,pwd,req,res) {
         var data = {
             success: false,
             message: "Invalid credentials or server down",
-            redirectLink: rootUrl,
+            redirectLink: '/',
             loading: false
         };
         datas[uid] = data;
@@ -75,7 +73,7 @@ async function run(uid,pwd,req,res) {
                 success: true,
                 loading: false,
                 message: "Success",
-                redirectLink: rootUrl + scr
+                redirectLink: '/' + scr
             };
             datas[uid] = data;
         })
@@ -85,7 +83,7 @@ async function run(uid,pwd,req,res) {
     var data = {
         success: false,
         message: "Couldnot fetch results",
-        redirectLink: rootUrl,
+        redirectLink: '/',
         loading: false
     };
     datas[uid] = data;
@@ -125,7 +123,7 @@ app.post('/fetch/', function(req, res) {
     datas[uid] = data;
     res.setHeader('Content-Type', 'application/json');
     var d = {
-        pingUrl: rootUrl + 'available/' + uid
+        pingUrl:  '/available/' + uid
     };
     res.send(d);
     run(uid,pwd,req,res);
