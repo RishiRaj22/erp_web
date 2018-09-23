@@ -250,23 +250,37 @@ body {
                 data: JSON.stringify(data),
                 success: function (data) {
                     var pu = data.pingUrl;
+                    fails = 0;
                     function doPoll(){
                         console.log("Polling");
                         $.get(pu, function(data) {
-                            console.log(data);
-                            data = JSON.parse(data);
-                            if(data.loading) {
-                                $("#loading_text").text(data.message);
-                                setTimeout(doPoll,2000);
-                            } else {
-                                $("#loading_add").hide();
-                                if (data.success) {
-                                    window.location = data.redirectLink;
+                            try {
+                                console.log(data);
+                                data = JSON.parse(data);
+                                if(data.loading) {
+                                    $("#loading_text").text(data.message);
+                                    setTimeout(doPoll,2000);
                                 } else {
-                                    $("#input_error_msg").text(data.message);
+                                    $("#loading_add").hide();
+                                    if (data.success) {
+                                        window.location = data.redirectLink;
+                                    } else {
+                                        $("#input_error_msg").text(data.message);
+                                    }
+                                    requestQueued = false;
+                                    canRequestBeSent(4);
                                 }
-                                requestQueued = false;
-                                canRequestBeSent(4);
+                            } catch(er) {
+                                fails++;
+                                if(fails < 10) {
+                                    setTimeout(doPoll,2000);
+                                }
+                            }
+                        })
+                        .fail(function() {
+                            fails++;
+                            if(fails < 10) {
+                                setTimeout(doPoll,2000);
                             }
                         });
                     }
