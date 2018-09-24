@@ -9,6 +9,7 @@
 </head>
     <body>
         <h1>Type your ERP credentials</h1>
+    <button id="sound"></button>
 <form id="form_add" action="/add/" method="post">
     <div>
         <label for="uid" class="input_label_add">User ID</label>
@@ -28,6 +29,7 @@
         <input type="submit" class="button" id="button_add" value="Submit"/>
     </div>
 </form>
+
 <p>It usually takes about 35 seconds to load attendance data</p>
 <h3>Disclaimer: I do not store any credentials. Read the source or build it thyself if you don't take my word for it.</h3>
 <footer>Made by <a href="https://rishiraj.me">Rishi Raj</a> &middot; <a href="https://github.com/rishiraj22/erp_web">Source code</a>
@@ -39,6 +41,14 @@
 <style>
 * {
     text-align: center;
+}
+#sound {
+    position: absolute;
+    top: 5px;
+    padding: 5px;
+    margin: 5px;
+    font-size: 0.7em;
+    right: 10px;
 }
 input {
     font-size: 0.9em;
@@ -182,6 +192,7 @@ body {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
     $(function () {
+    var bell = new Audio('/sounds/ringtone.mp3');
     var uid, pass;
     var requestQueued = false;
     $("#loading_add").hide();
@@ -217,6 +228,26 @@ body {
         return false;
     };
 
+    function getSound() {
+        var cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)sound\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        var sound = true;
+        if(cookieValue === "false") {
+            sound = false;
+        }
+        return sound;
+    }
+    function setSound(s) {
+        document.cookie = "sound=" + (s?"true;":"false;");
+        if(s) {
+            $("#sound").text('Disable sound');
+        } else {
+            $("#sound").text('Enable sound');
+        }
+    }
+    setSound(getSound());
+    $('#sound').click(function() {
+        setSound(!getSound());
+    })
     $('#uid').keyup(canRequestBeSent);
 
     $('#password').keyup(canRequestBeSent);
@@ -263,7 +294,12 @@ body {
                                 } else {
                                     $("#loading_add").hide();
                                     if (data.success) {
-                                        window.location = data.redirectLink;
+                                        if(getSound()) {
+                                            bell.play();
+                                            setTimeout(() => {window.location = data.redirectLink;},500); 
+                                        } else {
+                                            window.location = data.redirectLink;
+                                        }
                                     } else {
                                         $("#input_error_msg").text(data.message);
                                     }
