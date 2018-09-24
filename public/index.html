@@ -9,7 +9,6 @@
 </head>
     <body>
         <h1>Type your ERP credentials</h1>
-    <button id="sound"></button>
 <form id="form_add" action="/add/" method="post">
     <div>
         <label for="uid" class="input_label_add">User ID</label>
@@ -19,6 +18,10 @@
         <label for="password" class="input_label_add">Password</label>
         <input name="password" class="input_add" id="password" type="password"/>
         <div id="password_toggle" class="show button">Show</div>
+    </div>
+    <div>
+        <label for="sound" id="sound_label">Enable sound</label>
+        <input id="sound" type="checkbox"/>
     </div>
     <div id="input_error_msg" class="error_message"></div>
     <div id="loading_add" class="loading_status">
@@ -43,9 +46,6 @@
     text-align: center;
 }
 #sound {
-    position: absolute;
-    top: 5px;
-    padding: 5px;
     margin: 5px;
     font-size: 0.7em;
     right: 10px;
@@ -238,11 +238,7 @@ body {
     }
     function setSound(s) {
         document.cookie = "sound=" + (s?"true;":"false;");
-        if(s) {
-            $("#sound").text('Disable sound');
-        } else {
-            $("#sound").text('Enable sound');
-        }
+        $("#sound").prop('checked',s);
     }
     setSound(getSound());
     $('#sound').click(function() {
