@@ -3,16 +3,6 @@ const app = express();
 const bodyParser = require('body-parser')
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-
-
-//Comment the 8 lines below to run locally(required to enforce https)
-app.use((req, res, next) => {
-    if (req.header('x-forwarded-proto') !== 'https') {
-        res.redirect(`https://${req.header('host')}${req.url}`)
-    } else {
-        next();
-    }
-});
   
 
 var datas = {};
