@@ -129,8 +129,9 @@ app.post('/fetch/', function(req, res) {
     run(uid,pwd,req,res);
 });
 
-const port = process.env.PORT || 8080;
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var server_ip_address = process.env.IP || process.env.OPENSHIFT_NODEJS_IP ||  '0.0.0.0';
 
-app.listen(port, function () {
+app.listen(server_port,server_ip_address, function () {
     console.log('App listening on ' + port)
 })
